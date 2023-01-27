@@ -1,6 +1,5 @@
 from django.shortcuts import render
-from markdown2 import Markdown
-
+import markdown
 from . import util
 
 def convert_md(title):
@@ -19,6 +18,33 @@ def index(request):
 def entry(request,title):
     converted_html = convert_md(title)
     if converted_html == None:
-        return render(request, "encyclopedia/not_found.html")
+        return render(request, "encyclopedia/error.html", {"message": "Sorry, this entry does not exist."})
     else:
-        return render(request, "encyclopedia/entry.html")
+        return render(request, "encyclopedia/entry.html",{
+            "title": title,
+            "content": converted_html
+        })
+
+def search(request):
+    if request.method == "POST":
+        search_entry = request.POST['q']
+        converted_html = convert_md(search_entry)
+        if converted_html is not None:
+             return render(request, "encyclopedia/entry.html",{
+            "title": search_entry,
+            "content": converted_html
+            })
+        else:
+            all_entries = util.list_entries()
+            suggested_entries = []
+            for entry in all_entries:
+                if search_entry.lower() in entry.lower():
+                    suggested_entries.append(entry)
+            return render(request, "encyclopedia/search.html", {
+                "suggested_entries" : suggested_entries
+            })
+        
+            
+def create_new_page(request):
+    if request.method == "GET":
+        return render(request, "encyclopedia/create.html")

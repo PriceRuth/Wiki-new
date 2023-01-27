@@ -1,14 +1,14 @@
 {% extends "encyclopedia/layout.html" %}
 
 {% block title %}
-    Encyclopedia
+    Search
 {% endblock %}
 
 {% block body %}
-    <h1>All Pages</h1>
+    <h1>Search</h1>
 
     <ul>
-        {% for entry in entries %}
+        {% for entry in suggested_entries %}
             <a href="/wiki/{{entry}}"><li>{{ entry }}</li></a>
         {% endfor %}
     </ul>
